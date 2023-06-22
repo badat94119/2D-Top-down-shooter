@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 2093354509356901862}
   - component: {fileID: 2093354509356901863}
   - component: {fileID: 2837344656769091647}
+  - component: {fileID: -4459988449968795769}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -155,6 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 1
   _rotationSpeed: 100
+  _screenBorder: -30
 --- !u!114 &2093354509356901863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,3 +186,16 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-4459988449968795769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093354509356901860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7011f28396e60242bd7580a9086c620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _damageAmount: 10
