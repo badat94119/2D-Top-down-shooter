@@ -1,16 +1,4 @@
-﻿/* ----------------------------
- * 2D Maze Generator for Unity.
- * Uses Deapth-First searching 
- * and Recursive Backtracking.
- * ----------------------------
- * Generates a 2x2 centre room in 
- * the middle of the Maze.
- * ----------------------------
- * Author: c00pala
- * ~13/05/2018~
- * ---------------------------- */
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
