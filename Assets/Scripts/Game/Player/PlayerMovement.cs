@@ -64,13 +64,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void RotateInDirectionOfInput()
     {
-        if (_movementInput != Vector2.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(transform.forward, _smoothedMovementInput);
-            Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        Vector3 mousePosition = Input.mousePosition;
+        Vector3 objectPosition = transform.position;
+        Vector3 offset = mousePosition - _camera.WorldToScreenPoint(objectPosition);
+        float angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+        float rotationSpeed = 5f;
 
-            _rigidbody.MoveRotation(rotation);
-        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     private void OnMove(InputValue inputValue)
