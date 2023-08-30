@@ -6,25 +6,29 @@ public class PlayerAwarenessController : MonoBehaviour
 {
     public bool AwareOfPlayer { get; private set; }
 
+    private bool _isPermanantlyAware;
+
     public Vector2 DirectionToPlayer { get; private set; }
-
-    [SerializeField]
-    private float _playerAwarenessDistance;
-
     private Transform _player;
+    private EnemyAttributes _enemyAttributes;
 
     private void Awake()
     {
         _player = FindObjectOfType<PlayerMovement>().transform;
+        _enemyAttributes = GetComponent<EnemyAttributes>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
+    {
+        _isPermanantlyAware = false;
+    }
+
+    private void Update()
     {
         Vector2 enemyToPlayerVector = _player.position - transform.position;
         DirectionToPlayer = enemyToPlayerVector.normalized;
 
-        if (enemyToPlayerVector.magnitude <= _playerAwarenessDistance)
+        if (enemyToPlayerVector.magnitude <= _enemyAttributes.PlayerAwarenessDistance || _isPermanantlyAware) 
         {
             AwareOfPlayer = true;
         }
@@ -32,5 +36,11 @@ public class PlayerAwarenessController : MonoBehaviour
         {
             AwareOfPlayer = false;
         }
+    }
+
+    public void MakePermanantlyAware()
+    {
+        _isPermanantlyAware = true;
+        AwareOfPlayer = true;
     }
 }

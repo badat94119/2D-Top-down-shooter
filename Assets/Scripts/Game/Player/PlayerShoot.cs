@@ -1,57 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _bulletPrefab;
-
-    [SerializeField]
-    private float _bulletSpeed;
+    private WeaponAttributes _defaultWeaponAttributes;
 
     [SerializeField]
     private Transform _gunOffset;
 
-    [SerializeField]
-    private float _timeBetweenShots;
+    private Weapon _defaultWeapon;
+    private Weapon _currentWeapon;
 
-    private bool _fireContinuously;
     private bool _fireSingle;
-    private float _lastFireTime;
+    private bool _fireContinuously;
 
-    void Update()
+    private AudioSource _audioSource;
+
+    private void Awake()
     {
-        if (_fireContinuously || _fireSingle)
+        _defaultWeapon = new Weapon(_defaultWeaponAttributes);
+        _currentWeapon = _defaultWeapon;
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    public void ResetToDefaultWeapon()
+    {
+        _currentWeapon = _defaultWeapon;
+    }
+
+    public void SetWeapon(Weapon weapon)
+    {
+        _currentWeapon = weapon;
+    }
+
+    private void Update()
+    {
+#if UNITY_WEBGL
+        // For some reason the new Input System isn't working with WebGL, so had to revert to the old Input system
+        if ((Input.GetButtonDown("Fire1") || Input.GetAxis("TriggerFire1") == 1) && _fireContinuously == false)
         {
-            float timeSinceLastFire = Time.time - _lastFireTime;
+            _fireSingle = true;
+        }
 
-            if (timeSinceLastFire >= _timeBetweenShots)
+        _fireContinuously = Input.GetButton("Fire1") || Input.GetAxis("TriggerFire1") == 1;
+#endif
+        if (_fireSingle || _fireContinuously)
+        {
+            if (_currentWeapon.TryFire(_gunOffset.position, transform.up, _audioSource))
             {
-                FireBullet();
-
-                _lastFireTime = Time.time;
                 _fireSingle = false;
             }
         }
     }
-
-    private void FireBullet()
+#if !UNITY_WEBGL
+        private void OnFire(InputValue value)
     {
-        GameObject bullet = Instantiate(_bulletPrefab, _gunOffset.position, transform.rotation);
-        Rigidbody2D rigidbody = bullet.GetComponent<Rigidbody2D>();
+        _fireContinuously = value.isPressed;
 
-        rigidbody.velocity = _bulletSpeed * transform.up;
-    }
-
-    private void OnFire(InputValue inputValue)
-    {
-        _fireContinuously = inputValue.isPressed;
-
-        if (inputValue.isPressed)
+        if (value.isPressed)
         {
             _fireSingle = true;
         }
     }
+#endif
 }

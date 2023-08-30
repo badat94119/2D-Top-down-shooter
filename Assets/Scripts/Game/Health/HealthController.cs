@@ -1,15 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class HealthController : MonoBehaviour
 {
-    [SerializeField]
-    private float _currentHealth;
+    public UnityEvent HealthChanged;
+
+    public UnityEvent Damaged;
+
+    public UnityEvent Died;
 
     [SerializeField]
     private float _maximumHealth;
+
+    [SerializeField]
+    private float _currentHealth;
 
     public float RemainingHealthPercentage
     {
@@ -21,57 +25,45 @@ public class HealthController : MonoBehaviour
 
     public bool IsInvincible { get; set; }
 
-    public UnityEvent OnDied;
-
-    public UnityEvent OnDamaged;
-
-    public UnityEvent OnHealthChanged;
-
-    public void TakeDamage(float damageAmount)
+    public void TakeDamage(float amount)
     {
-        if (_currentHealth == 0)
+        if (IsInvincible == true || _currentHealth == 0)
         {
             return;
         }
 
-        if (IsInvincible)
-        {
-            return;
-        }
+        _currentHealth -= amount;
+        
+        HealthChanged.Invoke();
 
-        _currentHealth -= damageAmount;
-
-        OnHealthChanged.Invoke();
-
-        if (_currentHealth < 0)
-        {
-            _currentHealth = 0;
-        }
+        ClampCurrentHealth();
 
         if (_currentHealth == 0)
         {
-            OnDied.Invoke();
+            Died.Invoke();
         }
         else
         {
-            OnDamaged.Invoke();
+            Damaged.Invoke();
         }
     }
 
-    public void AddHealth(float amountToAdd)
+    public void AddHealth(float amount)
     {
-        if (_currentHealth == _maximumHealth)
-        {
-            return;
-        }
+        _currentHealth += amount;
+        ClampCurrentHealth();
 
-        _currentHealth += amountToAdd;
+        HealthChanged.Invoke();
+    }
 
-        OnHealthChanged.Invoke();
+    public void SetHealth(float amount)
+    {
+        _currentHealth = amount;
+        ClampCurrentHealth();
+    }
 
-        if (_currentHealth > _maximumHealth)
-        {
-            _currentHealth = _maximumHealth;
-        }
+    private void ClampCurrentHealth()
+    {
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maximumHealth);
     }
 }

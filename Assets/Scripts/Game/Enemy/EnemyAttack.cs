@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    [SerializeField]
-    private float _damageAmount;
+    private EnemyAttributes _enemyAttributes;
+
+    private void Awake()
+    {
+        _enemyAttributes = GetComponent<EnemyAttributes>();
+    }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayerMovement>())
+        if (collision.collider.GetComponent<PlayerMovement>())
         {
-            var healthController = collision.gameObject.GetComponent<HealthController>();
+            HealthController healthController = collision.collider.GetComponent<HealthController>();
 
-            healthController.TakeDamage(_damageAmount);
+            healthController.TakeDamage(_enemyAttributes.Damage);
         }
     }
 }
